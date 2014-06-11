@@ -2,19 +2,106 @@
 
 
 ## Loading and preprocessing the data
-
-
+So this assumes that the file activity.csv is in the main folder.
+Then the file can be loaded by using:
+```{r}
+data <- read.csv("activity.csv")
+```
+Quick inspection of the data shows that date is a Factor. A conversion to date
+objects follows.
+```{r}
+str(data)
+data[,2] <- as.Date(data[,2])
+```
 
 ## What is mean total number of steps taken per day?
-
-
+To calculate this I will use the aggregate function and then make a histogram.
+Both mean and median are calculated and all NA are removed first.
+```{r}
+data1 <- na.omit(data)
+calculated_mean <- aggregate(steps~date, data=data1,FUN=mean)
+calculated_median <- aggregate(steps~date, data=data1,FUN=median)
+hist(calculated_mean$steps)
+calculated_mean
+calculated_median
+```
+So apparently the median total number of steps is 0 for all days due to there
+being more zeroes than anything else in this dataset.
 
 ## What is the average daily activity pattern?
-
+To find the average daily pattern the aggregate is taken for the steps and
+interval instead of the date. This data is plotted.
+```{r}
+averaged_mean <- aggregate(steps~interval, data=data1,FUN=mean)
+plot(averaged_mean, type="l")
+```
+The maximum interval can be found as:
+```{r}
+averaged_mean[which(averaged_mean$interval==max(averaged_mean$interval)),1]
+```
 
 
 ## Imputing missing values
+So since I removed the na values earlier the number of nas can be found as
+taking the diffence in rows from the untouched data.
+```{r}
+nrow(data)-nrow(data1)
+```
 
-
+The missing values will be filled in the with averaged rounded-off step count
+for the interval.
+```{r}
+data2 <- data
+for(i in 1:nrow(data2))
+    {
+    if(is.na(data2[i,1]))
+        {
+        data2[i,1] <- round(averaged_mean[which(averaged_mean[,1]==data2[i,3]),2],digits=0)
+        }
+    }
+```
+So to compare to the dataset with the removed values.
+```{r}
+calculated_mean2 <- aggregate(steps~date, data=data2,FUN=mean)
+calculated_median2 <- aggregate(steps~date, data=data2,FUN=median)
+hist(calculated_mean2$steps)
+calculated_mean
+calculated_mean2
+calculated_median
+calculated_median2
+```
+So there are some differences mostly with regards to median where some days
+have medians that are non-zero compared to the others with medians with zeroes.
+The mean has also changed depending on those days that have the most nas.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+First I need to add a new column with data on weekdays or weekends.
+NOTE: this is done on a Danish computer. If this needs to run on other machines
+then change the statements to read to your language. 
+(Extra note: I cannot change locale for some reason)
+```{r}
+data2$weekday <- weekdays(data2[,2])
+for(i in 1:nrow(data2))
+    {
+    if(data2[i,4] %in% c("mandag","tirsdag","onsdag","torsdag","fredag"))
+        {
+        data2[i,4] <- "weekday"
+        }
+    else
+        {
+        data2[i,4] <- "weekend"
+        }
+    }
+```
+
+Now for generating the two plots. First the dataset is divided into weekday and
+weekend data sets.
+```{r}
+weekday <- data2[which(data2[,4]=="weekday"),]
+weekend <- data2[which(data2[,4]=="weekend"),]
+weekday_agg <- aggregate(steps~interval, data=weekday,FUN=mean)
+weekend_agg <- aggregate(steps~interval, data=weekend,FUN=mean)
+plot(weekday_agg,type="l", col="red")
+lines(weekend_agg,type="l", col="blue")
+legend(1, 200, c("weekday","weekend"), cex=0.8, col=c("red","blue"), lty=1:1);
+```
