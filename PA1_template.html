@@ -371,7 +371,13 @@ taking the diffence in rows from the untouched data.</p>
 for the interval.</p>
 
 <pre><code class="r">data2 &lt;- data
-for(i in 1:nrow(data2))
+Sys.setlocale(&quot;LC_TIME&quot;,&quot;English&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;English_United States.1252&quot;
+</code></pre>
+
+<pre><code class="r">for(i in 1:nrow(data2))
     {
     if(is.na(data2[i,1]))
         {
@@ -655,7 +661,7 @@ then change the statements to read to your language.
 <pre><code class="r">data2$weekday &lt;- weekdays(data2[,2])
 for(i in 1:nrow(data2))
     {
-    if(data2[i,4] %in% c(&quot;mandag&quot;,&quot;tirsdag&quot;,&quot;onsdag&quot;,&quot;torsdag&quot;,&quot;fredag&quot;))
+    if(data2[i,4] %in% c(&quot;Monday&quot;,&quot;Tuesday&quot;,&quot;Wednesday&quot;,&quot;Thursday&quot;,&quot;Friday&quot;))
         {
         data2[i,4] &lt;- &quot;weekday&quot;
         }

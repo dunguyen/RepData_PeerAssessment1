@@ -201,6 +201,14 @@ for the interval.
 
 ```r
 data2 <- data
+Sys.setlocale("LC_TIME","English")
+```
+
+```
+## [1] "English_United States.1252"
+```
+
+```r
 for(i in 1:nrow(data2))
     {
     if(is.na(data2[i,1]))
@@ -492,7 +500,7 @@ then change the statements to read to your language.
 data2$weekday <- weekdays(data2[,2])
 for(i in 1:nrow(data2))
     {
-    if(data2[i,4] %in% c("mandag","tirsdag","onsdag","torsdag","fredag"))
+    if(data2[i,4] %in% c("Monday","Tuesday","Wednesday","Thursday","Friday"))
         {
         data2[i,4] <- "weekday"
         }
