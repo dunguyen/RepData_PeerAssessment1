@@ -492,9 +492,6 @@ The mean has also changed depending on those days that have the most nas.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 First I need to add a new column with data on weekdays or weekends.
-NOTE: this is done on a Danish computer. If this needs to run on other machines
-then change the statements to read to your language. 
-(Extra note: I cannot change locale for some reason)
 
 ```r
 data2$weekday <- weekdays(data2[,2])
